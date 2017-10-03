@@ -112,9 +112,19 @@ function receivedPostback(event) {
 
   // The 'payload' param is a developer-defined field which is set in a postback 
   // button for Structured Messages. 
+  console.log("postback received");
   var payload = event.postback.payload;
   if (payload === "get_started"){
       sendTextMessage(senderID, "OK send me some ingredients");
+  }
+  if (payload === "about_curly_girl"){
+    var introMessage = "The curly girl method is a way of caring for your naturally curly or wavy hair that helps it look its best."
+    + "A important principle is hair should be gently washed without sulfates using a sulfate-free shampoo or conditioner cowash."
+    + "But that also means that you need to avoid most silicones and waxes, which build up on the hair and require sulfates to remove."
+    + "I can help you find what products have the right ingredients, just send me ingredient lists and I'll do the detective work.";
+    sendTextMessage(senderID, introMessage);
+    sendTextMessage(senderID, "Here are some links and books you might find helpful for learning about the curly girl method");
+    sendGenericMessage(senderID);
   }
 
   console.log("Received postback for user %d and page %d with payload '%s' " + 
@@ -152,34 +162,25 @@ function sendGenericMessage(recipientId) {
         payload: {
           template_type: "generic",
           elements: [{
-            title: "rift",
-            subtitle: "Next-generation virtual reality",
-            item_url: "https://www.oculus.com/en-us/rift/",               
-            image_url: "http://messengerdemo.parseapp.com/img/rift.png",
-            buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/rift/",
-              title: "Open Web URL"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble",
-            }],
+            title: "How To Follow The Curly Girl Method",
+            item_url: "https://www.naturallycurly.com/curlreading/no-poo/the-curly-girl-method-for-coily-hair/",               
+            image_url: "https://content.naturallycurly.com/wp-content/uploads/2016/07/cg-method-1.jpg"
           }, {
-            title: "touch",
-            subtitle: "Your Hands, Now in VR",
-            item_url: "https://www.oculus.com/en-us/touch/",               
-            image_url: "http://messengerdemo.parseapp.com/img/touch.png",
+            title: "Curly Girl: The Handbook ",
+            subtitle: "This is the book that started it all!",
+            item_url: "https://www.amazon.com/Curly-Girl-Handbook-Michele-Bender/dp/076115678X",               
+            image_url: "https://images-na.ssl-images-amazon.com/images/I/51GRZvUlT4L._SX410_BO1,204,203,200_.jpg"
+          },
+          { title: "How to Follow the Curly Girl Method for Curly Hair",
+            subtitle: "A good article with step by step instructions",
+            item_url: "http://www.wikihow.com/Follow-the-Curly-Girl-Method-for-Curly-Hair",   
             buttons: [{
               type: "web_url",
-              url: "https://www.oculus.com/en-us/touch/",
-              title: "Open Web URL"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for second bubble",
+              url:"http://www.wikihow.com/Follow-the-Curly-Girl-Method-for-Curly-Hair",
+              title: "Check it out"
             }]
-          }]
+          }
+          ]
         }
       }
     }
@@ -399,6 +400,7 @@ var badWaxesOils = [
 function evaluateIngredients(ingredients, senderID){
   var ingredientsList = ingredients.split(',');
   // TODO need to handle slashs
+  var ingredientsHandled = true;
   var ingredientDetected = false;
   var badIngredientsDetected = false;
 
@@ -422,14 +424,18 @@ function evaluateIngredients(ingredients, senderID){
   ingredientsList.forEach(function(ingredient){
     //clean up our string
     var ingredientTest = ingredient.trim().toLowerCase();
-
+    if (ingredientTest.length >= 100){
+      ingredientsHandled = false;
+      //console.log("can't handle");
+      //return;
+    }
     // TODO need case for handling extremely long strings to warn them of issue
     // detect cones
     var cone = /cone/i; 
     if(cone.test(ingredientTest)) {
 
       ingredientDetected = true;
-      console.log(ingredientTest);
+      console.log("silicone");
       // for now we only have one "good silicone" pattern so let's test for it
       var goodSilicone = /quaternium/i
       if (goodSilicone.test(ingredientTest)){
@@ -524,39 +530,50 @@ function evaluateIngredients(ingredients, senderID){
   });
   
   // TODO implement promises
+  if(ingredientsHandled=== false){
+    var message = "Sorry, but I can't really read this list properly because it doesn't look like a comma seperated list to me. Being a \uD83E\uDD16 does have some annoying limitations sometimes. "
+    if (ingredientDetected === true) {
+      message += " It does look like this contains some silicones or sulfates though, or maybe both.";
+        
+    }
+    sendTextMessage(senderID,  message);
+
+    return;
+  }
 
   if(ingredientDetected === false){
-    //console.log("I can't find anything wrong with this ingredient list, but I'm still a baby bot and I'm learning. Check this list to be sure.");
+    var message = "\uD83C\uDF89 Woohoo, I can't find anything wrong with this, looks like it's curly girl approved!"
+    sendTextMessage(senderID,  message);
   }
 
 
   if (goodSiliconeList){
-    sendTextMessage(senderID,  "These look like 'good silicones' because they are water soluble, they are perfectly OK: \n \n" + goodSiliconeList);
+    sendTextMessage(senderID,  "These look like 'good silicones' because they are water soluble, they are perfectly OK \uD83D\uDC4D: \n \n" + goodSiliconeList);
   }
 
   if (badSiliconeList) {
-    var message = "Yikes, it seems to me this product has these bad silicones, they can build up on your hair and meant this product is not 'curly girl approved': \n \n"; 
+    var message = "\uD83D\uDEAB Yikes, it seems to me this product has these bad silicones, they can build up on your hair and meant this product is not 'curly girl approved': \n \n"; 
     sendTextMessage(senderID,  message + badSiliconeList);
 
   }
 
   if(unknownSiliconeList){
-    var message = "I don't know these silicones. Maybe I should learn about them. In the meantime you should do your own research: \n \n ";
+    var message = "\u2753 I don't know these silicones. Maybe I should learn about them. In the meantime you should do your own research: \n \n ";
     sendTextMessage(senderID,  message + unknownSiliconeList);
   }
 
   if (goodSulfateList){
-    var message = "These are sulfates but they are gentle, so that means they are curly-girl approved! : \n \n"
+    var message = "\u2B50\uFE0F These are sulfates but they are gentle, so that means they are curly-girl approved! : \n \n"
     sendTextMessage(senderID,  message + goodSulfateList);
   }
 
   if (badSulfateList){
-    var message = "Yikes! These harsh sulfates are not curly girl approved! : \n \n"
+    var message = "\u2639\uFE0F Yikes! These harsh sulfates are not curly girl approved! : \n \n"
     sendTextMessage(senderID,  message + badSulfateList);
   }
 
   if (unknownSulfateList){
-    var message = "I can't tell you much about these sulfates, you should look them up for more info : \n \n"
+    var message = "\u2753 I can't tell you much about these sulfates, you should look them up for more info : \n \n"
     sendTextMessage(senderID,  message + unknownSulfateList);
   }
 
@@ -571,17 +588,17 @@ function evaluateIngredients(ingredients, senderID){
   }
 
   if (unknownAlcoholList){
-    var message = "Well that's embarrassing, this is an alcohol, but I can't tell you anything about it, you should probably Google it. Someday I hope to be smarter than Google : \n \n"
+    var message = "\u2753 Well that's embarrassing, this is an alcohol, but I can't tell you anything about it, you should probably Google it. Someday I hope to be smarter than Google : \n \n"
     sendTextMessage(senderID,  message + unknownAlcoholList);
   }
 
   if (badWaxOilList){
-    var message = "Hmm looks like this product has some CG unapproved waxes or oils : \n \n"
+    var message = "\uD83D\uDC4E Hmm looks like this product has some CG unapproved waxes or oils : \n \n"
     sendTextMessage(senderID,  message + badWaxOilList);
   }
 
   if (unknownWaxOilList){
-    var message = "These are some waxes and oils I don't know much about, I recommend you look them up. I would if I could : \n \n"
+    var message = "\u2753 These are some waxes and oils I don't know much about, I recommend you look them up. I would if I could : \n \n"
     sendTextMessage(senderID,  message + unknownWaxOilList);
   }
 

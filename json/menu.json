@@ -5,8 +5,8 @@
     "call_to_actions":[
       {
         "type":"postback",
-        "title":"This",
-        "payload":"change_category"
+        "title":"About Curly Girl",
+        "payload":"about_curly_girl"
       }
     ]
   }]
