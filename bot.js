@@ -6,6 +6,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const path = require('path');
+const async = require("async");
+
 var messengerButton = "<html><head><title>Facebook Messenger Bot</title></head><body><h1>Facebook Messenger Bot</h1>This is a bot based on Messenger Platform QuickStart. For more details, see their <a href=\"https://developers.facebook.com/docs/messenger-platform/guides/quick-start\">docs</a>.<script src=\"https://button.glitch.me/button.js\" data-style=\"glitch\"></script><div class=\"glitchButton\" style=\"position:fixed;top:20px;right:20px;\"></div></body></html>";
 
 // The rest of the code implements the routes for our Express server.
@@ -148,7 +150,7 @@ function sendTextMessage(recipientId, messageText) {
     }
   };
 
-  callSendAPI(messageData);
+  return callSendAPI(messageData);
 }
 
 function sendGenericMessage(recipientId) {
@@ -240,7 +242,7 @@ function sendTextList(recipientId, intro, array) {
 
 
 
-function callSendAPI(messageData) {
+/*function callSendAPI(messageData) {
   request({
     uri: 'https://graph.facebook.com/v2.6/me/messages',
     qs: { access_token: process.env.PAGE_ACCESS_TOKEN },
@@ -260,8 +262,34 @@ function callSendAPI(messageData) {
       console.error(error);
     }
   });  
-}
-
+}*/
+function callSendAPI(messageData) {
+    return new Promise(function (resolve, reject) { // ***
+      request({
+        uri: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: { access_token: process.env.PAGE_ACCESS_TOKEN },
+        method: 'POST',
+        json: messageData
+      }, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var recipientId = body.recipient_id;
+          var messageId = body.message_id;
+          if (messageId) {
+            console.log("Successfully sent message with id %s to recipient %s", 
+              messageId, recipientId);
+          } else {
+            console.log("Successfully called Send API for recipient %s", 
+              recipientId);
+          }
+                resolve(body); // ***
+              } else {
+                console.error("Failed calling Send API", response.statusCode,
+                  response.statusMessage, body.error);
+                reject(body.error); // ***
+              }
+            });
+    });
+  }
 // Set Express to listen out for HTTP requests
 var server = app.listen(process.env.PORT || 3000, function () {
   console.log("Listening on port %s", server.address().port);
@@ -529,85 +557,94 @@ function evaluateIngredients(ingredients, senderID){
 
 
   });
+var messages = [];
   
-  // TODO implement promises
-  if(ingredientsHandled=== false){
+ if(ingredientsHandled=== false){
     var message = "Sorry, but I can't really read this list properly because it doesn't look like a comma seperated list to me. Being a \uD83E\uDD16 does have some annoying limitations sometimes. "
     if (ingredientDetected === true) {
       message += " It does look like this contains some silicones or sulfates though, or maybe both.";
         
     }
-    sendTextMessage(senderID,  message);
+    messages.push(message);
 
     return;
   }
 
 
   if (goodSiliconeList){
-    sendTextMessage(senderID,  "\u2B50\uFE0F These look like 'good silicones' because they are water soluble, they are perfectly OK \uD83D\uDC4D: \n \n" + goodSiliconeList);
+    var message = "\u2B50\uFE0F These look like 'good silicones' because they are water soluble, they are perfectly OK \uD83D\uDC4D: \n \n";
+     messages.push(message + goodSiliconeList);
   }
 
   if (badSiliconeList) {
     var message = "\uD83D\uDEAB Yikes, it seems to me this product has these bad silicones, they can build up on your hair and mean this product is not 'curly girl approved': \n \n"; 
-    sendTextMessage(senderID,  message + badSiliconeList);
+    messages.push(message + badSiliconeList);
 
   }
 
   if(unknownSiliconeList){
     var message = "\u2753 I don't know these silicones yet, i'll take a note and try to find out more about them. In the meantime you should do your own research: \n \n ";
-    sendTextMessage(senderID,  message + unknownSiliconeList);
+    messages.push(message + unknownSiliconeList);
   }
 
   if (goodSulfateList){
     var message = "\u2B50\uFE0F These are sulfates but they are gentle, so that means they are curly-girl approved! : \n \n"
-    sendTextMessage(senderID,  message + goodSulfateList);
+    messages.push(message + goodSulfateList);
   }
 
   if (badSulfateList){
     var message = "\uD83D\uDEAB Yikes! These harsh sulfates are not curly girl approved! : \n \n"
-    sendTextMessage(senderID,  message + badSulfateList);
+    messages.push(message + badSulfateList);
   }
 
   if (unknownSulfateList){
     var message = "\u2753 I can't tell you much about these sulfates, you should look them up for more info : \n \n"
-    sendTextMessage(senderID,  message + unknownSulfateList);
+    messages.push(message + unknownSulfateList);
   }
 
   if (goodAlcoholList){
     var message = "\u2B50\uFE0F These alcohols won't dry our your hair, they are curly girl approved: \n \n"
-    sendTextMessage(senderID,  message + goodAlcoholList);
+    messages.push(message + goodAlcoholList);
   }
 
   if (badAlcoholList){
     var message = "\uD83D\uDEAB these alcohols will dry out your hair, they are not curly girl approved : \n \n"
-    sendTextMessage(senderID,  message + badAlcoholList);
+    messages.push(message + badAlcoholList);
   }
 
   if (unknownAlcoholList){
     var message = "\u2753 Well that's embarrassing, this is an alcohol, but I can't tell you anything about it, you should probably Google it. Someday I hope to be smarter than Google : \n \n"
-    sendTextMessage(senderID,  message + unknownAlcoholList);
+    messages.push(message + unknownAlcoholList);
   }
 
   if (badWaxOilList){
     var message = "\uD83D\uDEAB Hmm looks like this product has some CG unapproved waxes or oils : \n \n"
-    sendTextMessage(senderID,  message + badWaxOilList);
+    messages.push(message + badWaxOilList);
   }
 
   if (unknownWaxOilList){
     var message = "\u2753 These are some waxes and oils I don't know much about, I recommend you look them up. I would if I could : \n \n"
-    sendTextMessage(senderID,  message + unknownWaxOilList);
+    messages.push(message + unknownWaxOilList);
   }
   
   if(badIngredientsDetected === true){
     var message = "\uD83D\uDC81 My final verdict? Looks like this product is NOT curly girl approved \uD83D\uDED1"
-    sendTextMessage(senderID,  message);
+    messages.push(message);
   } else if (questionableIngredientsDetected === true ) {
     var message = "\uD83D\uDC81 My final verdict? I can't say if this is approved or not, you'll need to do your own research. \u26A0\uFE0F"
-    sendTextMessage(senderID,  message);
+    messages.push(message);
   } else {
     var message = "\uD83C\uDF89 Woohoo, I can't find anything wrong with this, looks like it's curly girl approved! But don't forget to read the label carefully and do a backup check yourself – ingredients listed online are not always accurate. "
-    sendTextMessage(senderID,  message);
+    messages.push(message);
   }
+console.log(messages);
+async function executeSequentially(messages) {
+
+    for (const message of messages) {
+        await sendTextMessage(senderID, message);
+    }
+}
+  executeSequentially(messages);
   
 
 
