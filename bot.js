@@ -426,12 +426,18 @@ var badWaxesOils = [
 ];
 
 function evaluateIngredients(ingredients, senderID){
-  var ingredientsList = ingredients.split(',');
-  // TODO need to handle slashs
   var ingredientsHandled = true;
   var ingredientDetected = false;
   var questionableIngredientsDetected=false;
   var badIngredientsDetected = false;
+  
+  if (ingredients.indexOf(',') === -1 ){
+      ingredientsHandled = false;
+      console.log("can't handle");
+  }
+  var ingredientsList = ingredients.split(',');
+  // TODO need to handle slashs
+
 
 
   // TODO clean this up
@@ -447,13 +453,15 @@ function evaluateIngredients(ingredients, senderID){
   var goodWaxOilList = "";
   var badWaxOilList= "";
   var unknownWaxOilList= "";
+  
 
 
 
   ingredientsList.forEach(function(ingredient){
     //clean up our string
     var ingredientTest = ingredient.trim().toLowerCase();
-    if (ingredientTest.length >= 100 || ingredientTest.indexOf(',') ==-1 ){
+    console.log(ingredientTest.indexOf(',') == -1);
+    if (ingredientTest.length >= 100 ){
       ingredientsHandled = false;
       console.log("can't handle");
       return;
