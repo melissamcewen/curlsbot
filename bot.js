@@ -426,12 +426,18 @@ var badWaxesOils = [
 ];
 
 function evaluateIngredients(ingredients, senderID){
-  var ingredientsList = ingredients.split(',');
-  // TODO need to handle slashs
   var ingredientsHandled = true;
   var ingredientDetected = false;
   var questionableIngredientsDetected=false;
   var badIngredientsDetected = false;
+  
+  if (ingredients.indexOf(',') === -1 ){
+      ingredientsHandled = false;
+      console.log("can't handle");
+  }
+  var ingredientsList = ingredients.split(',');
+  // TODO need to handle slashs
+
 
 
   // TODO clean this up
@@ -447,16 +453,18 @@ function evaluateIngredients(ingredients, senderID){
   var goodWaxOilList = "";
   var badWaxOilList= "";
   var unknownWaxOilList= "";
+  
 
 
 
   ingredientsList.forEach(function(ingredient){
     //clean up our string
     var ingredientTest = ingredient.trim().toLowerCase();
-    if (ingredientTest.length >= 100){
+    console.log(ingredientTest.indexOf(',') == -1);
+    if (ingredientTest.length >= 100 ){
       ingredientsHandled = false;
-      //console.log("can't handle");
-      //return;
+      console.log("can't handle");
+      return;
     }
     // TODO need case for handling extremely long strings to warn them of issue
     // detect cones
@@ -560,12 +568,13 @@ function evaluateIngredients(ingredients, senderID){
 var messages = [];
   
  if(ingredientsHandled=== false){
+   console.log("this won't be handled");
     var message = "Sorry, but I can't really read this list properly because it doesn't look like a comma seperated list to me. Being a \uD83E\uDD16 does have some annoying limitations sometimes. "
     if (ingredientDetected === true) {
       message += " It does look like this contains some silicones or sulfates though, or maybe both.";
         
     }
-    messages.push(message);
+    sendTextMessage(senderID, message);
 
     return;
   }
