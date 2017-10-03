@@ -402,6 +402,7 @@ function evaluateIngredients(ingredients, senderID){
   // TODO need to handle slashs
   var ingredientsHandled = true;
   var ingredientDetected = false;
+  var questionableIngredientsDetected=false;
   var badIngredientsDetected = false;
 
 
@@ -449,9 +450,8 @@ function evaluateIngredients(ingredients, senderID){
         badIngredientsDetected = true;
         badSiliconeList += ingredientTest += " \n" ;
       } else {
-        //sendLink(senderID, "https://www.naturallycurly.com/curlreading/products-ingredients/10-silicones-in-curly-hair-products-to-avoid/", "10 Silicones in Curly Hair Products to Avoid");
-        //sendTextList(senderID, ingredientTest + " is a silicone but I don't know about it yet, please check this list", badSilicones);
         unknownSiliconeList += ingredientTest += " \n ";
+        questionableIngredientsDetected=true;
 
       }
 
@@ -474,7 +474,7 @@ function evaluateIngredients(ingredients, senderID){
 
       } else {
         unknownSulfateList += ingredientTest += " \n";
-
+        questionableIngredientsDetected=true;
       }
     }
 
@@ -489,6 +489,7 @@ function evaluateIngredients(ingredients, senderID){
       } else if (goodAlcohols.indexOf(ingredientTest) !== -1){
         goodAlcoholList += ingredientTest += " \n";
       } else {
+        questionableIngredientsDetected=true;
         unknownAlcoholList += ingredientTest += " \n";
       }
 
@@ -541,24 +542,19 @@ function evaluateIngredients(ingredients, senderID){
     return;
   }
 
-  if(ingredientDetected === false){
-    var message = "\uD83C\uDF89 Woohoo, I can't find anything wrong with this, looks like it's curly girl approved!"
-    sendTextMessage(senderID,  message);
-  }
-
 
   if (goodSiliconeList){
-    sendTextMessage(senderID,  "These look like 'good silicones' because they are water soluble, they are perfectly OK \uD83D\uDC4D: \n \n" + goodSiliconeList);
+    sendTextMessage(senderID,  "\u2B50\uFE0F These look like 'good silicones' because they are water soluble, they are perfectly OK \uD83D\uDC4D: \n \n" + goodSiliconeList);
   }
 
   if (badSiliconeList) {
-    var message = "\uD83D\uDEAB Yikes, it seems to me this product has these bad silicones, they can build up on your hair and meant this product is not 'curly girl approved': \n \n"; 
+    var message = "\uD83D\uDEAB Yikes, it seems to me this product has these bad silicones, they can build up on your hair and mean this product is not 'curly girl approved': \n \n"; 
     sendTextMessage(senderID,  message + badSiliconeList);
 
   }
 
   if(unknownSiliconeList){
-    var message = "\u2753 I don't know these silicones. Maybe I should learn about them. In the meantime you should do your own research: \n \n ";
+    var message = "\u2753 I don't know these silicones yet, i'll take a note and try to find out more about them. In the meantime you should do your own research: \n \n ";
     sendTextMessage(senderID,  message + unknownSiliconeList);
   }
 
@@ -568,7 +564,7 @@ function evaluateIngredients(ingredients, senderID){
   }
 
   if (badSulfateList){
-    var message = "\u2639\uFE0F Yikes! These harsh sulfates are not curly girl approved! : \n \n"
+    var message = "\uD83D\uDEAB Yikes! These harsh sulfates are not curly girl approved! : \n \n"
     sendTextMessage(senderID,  message + badSulfateList);
   }
 
@@ -578,12 +574,12 @@ function evaluateIngredients(ingredients, senderID){
   }
 
   if (goodAlcoholList){
-    var message = "These alcohols won't dry our your hair, they are curly girl approved: \n \n"
+    var message = "\u2B50\uFE0F These alcohols won't dry our your hair, they are curly girl approved: \n \n"
     sendTextMessage(senderID,  message + goodAlcoholList);
   }
 
   if (badAlcoholList){
-    var message = "\uD83D\uDE31 these alcohols will dry out your hair, they are not curly girl approved : \n \n"
+    var message = "\uD83D\uDEAB these alcohols will dry out your hair, they are not curly girl approved : \n \n"
     sendTextMessage(senderID,  message + badAlcoholList);
   }
 
@@ -593,7 +589,7 @@ function evaluateIngredients(ingredients, senderID){
   }
 
   if (badWaxOilList){
-    var message = "\uD83D\uDC4E Hmm looks like this product has some CG unapproved waxes or oils : \n \n"
+    var message = "\uD83D\uDEAB Hmm looks like this product has some CG unapproved waxes or oils : \n \n"
     sendTextMessage(senderID,  message + badWaxOilList);
   }
 
@@ -601,6 +597,19 @@ function evaluateIngredients(ingredients, senderID){
     var message = "\u2753 These are some waxes and oils I don't know much about, I recommend you look them up. I would if I could : \n \n"
     sendTextMessage(senderID,  message + unknownWaxOilList);
   }
+  
+  if(badIngredientsDetected === true){
+    var message = "\uD83D\uDC81 My final verdict? Looks like this product is NOT curly girl approved \uD83D\uDED1"
+    sendTextMessage(senderID,  message);
+  } else if (questionableIngredientsDetected === true ) {
+    var message = "\uD83D\uDC81 My final verdict? I can't say if this is approved or not, you'll need to do your own research. \u26A0\uFE0F"
+    sendTextMessage(senderID,  message);
+  } else {
+    var message = "\uD83C\uDF89 Woohoo, I can't find anything wrong with this, looks like it's curly girl approved! But don't forget to read the label carefully and do a backup check yourself – ingredients listed online are not always accurate. "
+    sendTextMessage(senderID,  message);
+  }
+  
+
 
 
 
