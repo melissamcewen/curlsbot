@@ -21,6 +21,8 @@
   "dependencies": {
     "request": "^2.72.0",
     "express": "*",
-    "body-parser": "*"
-  }
+    "body-parser": "*",
+    "async": "*"
+  },
+  "engines": { "node": "7.x" }
 }
