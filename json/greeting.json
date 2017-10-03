@@ -1,0 +1,6 @@
+{
+  "greeting": [{
+    "locale": "default",
+    "text": "Hello, I'm CurlsBot, I'm just a baby bot and I'm learning, but message me a list of ingredients and I'll do my best to tell you if it's Curly Girl friendly!"
+  }]
+}
