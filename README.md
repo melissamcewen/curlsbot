@@ -1,23 +1,15 @@
-# Facebook Messenger Bot
+# CurlyBot
 
-This example project creates a Facebook Messenger bot, completely
-mirroring the quickstart located in [Messenger Platform docs](https://developers.facebook.com/docs/messenger-platform/guides/quick-start).
+![In Progess](https://img.shields.io/badge/In%20Progress--red.svg)
+This is a Facebook bot dedicated to the curly girl method of hair care pioneered by Lorraine Massey.
 
-It's an echo bot that responds to a user's message by repeating their message back to them. It also sends a generic template when a message with "generic" text is received. This project is not dependent on any external libraries and can easily be extended.
+A lot of people are interested in properly caring for their naturally curly or wavy hair, but it can be confusing to find the right methods and products. This bot aims to make it all easier!
 
-![](https://cdn.glitch.com/ca73ace5-3fff-4b8f-81c5-c64452145271%2FmessengerBotGIF.gif)
 
-## Getting Started
-To get started you need to:
+## Features
 
-- Set up your Facebook app on Facebook
+### Ingredient Analysis
+Right now the main (OK one of the only) features is that you can send CurlyBot a list of ingredients for analysis. The analysis mainly focuses on finding out if the product has ingredients not allowed in the curly girl method, but in the future it may provide more detailed advice about other aspects of ingredients.
 
-- Configure your Facebook App
-
-  The `Callback URL` you set when configuring your app on Facebook is your Glitch project's publish URL with '/webhook' appended. The publish URL is what loads when you click 'Show' and has the format 'https://project-name.glitch.me', so for this example we used 'https://messenger-bot.glitch.me/webhook' for the Callback URL.
-
-  The `Verify Token` is a string you make up - it's just used to make sure it is your Facebook app that your server is interacting with. 
-
-- Copy your app credentials into the `.env` file
-
-For more detailed setup instructions, see [Messenger Platform Quick Start](https://developers.facebook.com/docs/messenger-platform/guides/quick-start).
+### About Curly Girl
+The persistent menu in the chat box has a feature where you can click "About Curly Girl" for some quick info about the method.
