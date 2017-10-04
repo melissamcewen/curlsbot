@@ -117,7 +117,7 @@ function receivedPostback(event) {
   console.log("postback received");
   var payload = event.postback.payload;
   if (payload === "get_started"){
-      sendTextMessage(senderID, "OK send me some ingredients");
+      sendTextMessage(senderID, "Welcome, as a baby \uD83D\uDC76 bot \uD83E\uDD16 right now all I can really do is read ingredients. Would you like to send me some? I'll take a look.");
   }
   if (payload === "about_curly_girl"){
     var introMessage = "The curly girl method is a way of caring for your naturally curly or wavy hair that helps it look its best."
@@ -569,7 +569,7 @@ var messages = [];
   
  if(ingredientsHandled=== false){
    console.log("this won't be handled");
-    var message = "Sorry, but I can't really read this list properly because it doesn't look like a comma seperated list to me. Being a \uD83E\uDD16 does have some annoying limitations sometimes. "
+    var message = "Wow thanks for the compliment! \uD83D\uDE0A Oh was this supposed to be some ingredients? If so I'm sorry, but I can't really read this list properly because it doesn't look like a comma seperated list to me. Being a \uD83E\uDD16 does have some annoying limitations sometimes. "
     if (ingredientDetected === true) {
       message += " It does look like this contains some silicones or sulfates though, or maybe both.";
         
@@ -586,7 +586,7 @@ var messages = [];
   }
 
   if (badSiliconeList) {
-    var message = "\uD83D\uDEAB Yikes, it seems to me this product has these bad silicones, they can build up on your hair and mean this product is not 'curly girl approved': \n \n"; 
+    var message = "\uD83D\uDEAB Yikes, it seems to me this product has these bad silicones, they can build up on your hair and mean this product is not curly girl approved \uD83D\uDE22: \n \n"; 
     messages.push(message + badSiliconeList);
 
   }
