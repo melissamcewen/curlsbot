@@ -1,4 +1,4 @@
-# CurlyBot
+# CurlsBot
 
 ![In Progess](https://img.shields.io/badge/In%20Progress--red.svg)
 This is a Facebook bot dedicated to the curly girl method of hair care pioneered by Lorraine Massey.
