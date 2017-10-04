@@ -101,10 +101,10 @@ function receivedMessage(event) {
   console.log(greeting);
   
   if (greeting && greeting.confidence > 0.8) {
-    sendTextMessage(senderID, "Well hello there! I'd here to help. Send me an ingredient list and I'll take a look.");
+    sendTextMessage(senderID, "Well hello there! I'd here to help. Send me an ingredient list and I'll take a look. \uD83D\uDC4B\uD83E\uDD16\uD83D\uDC4D");
 
   } else if (thanks && thanks.confidence > 0.8) {
-    sendTextMessage(senderID, "You're welcome! I'm happy to help! Let me know next time you have an ingredient list that needs to be analyzed.");
+    sendTextMessage(senderID, "You're welcome! I'm happy to help! Let me know next time you have an ingredient list that needs to be analyzed. \uD83E\uDD16\uD83D\uDC4D");
   
   } else if (messageText) {
     // If we receive a text message, check to see if it matches a keyword
@@ -551,7 +551,7 @@ function evaluateIngredients(ingredients, senderID){
         
         goodAlcohols.forEach(function(alcohol) {
           var testing = ingredientTest.indexOf(alcohol);
-          if(testing !== -1){
+          if(testing !== -1 && goodAlcoholDetect === false){
             goodAlcoholDetect = true;
             goodAlcoholList += "-";
             goodAlcoholList += ingredientTest += " is probably " ;
@@ -576,12 +576,13 @@ function evaluateIngredients(ingredients, senderID){
     if(beeswax.test(ingredientTest)|| waxOilTest !== -1 || petro.test(ingredientTest) || mineral.test(ingredientTest)){
       ingredientDetected = true;
       if(waxOilTest !== -1){
+        badIngredientsDetected = true;
         badWaxOilList += ingredientTest += " \n";
       } else {
         var WaxOildetect = false;
         badWaxesOils.forEach(function(baddy) {
           var testing = ingredientTest.indexOf(baddy);
-          if(testing !== -1){
+          if(testing !== -1 && WaxOildetect === false){
             WaxOildetect = true;
             badWaxOilList += ingredientTest += " is probably " ;
             badWaxOilList += baddy += " but I'm not entirely sure \n";
