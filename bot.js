@@ -70,6 +70,10 @@ app.post('/webhook', function (req, res) {
     res.sendStatus(200);
   }
 });
+// helper function for nlp handling
+function firstEntity(nlp, name) {
+  return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+}
 
 // Incoming events handling
 function receivedMessage(event) {
@@ -77,17 +81,32 @@ function receivedMessage(event) {
   var recipientID = event.recipient.id;
   var timeOfMessage = event.timestamp;
   var message = event.message;
+  
+//console.dir(event, { depth: null });
+  
 
   console.log("Received message for user %d and page %d at %d with message:", 
     senderID, recipientID, timeOfMessage);
   console.log(JSON.stringify(message));
 
+
   var messageId = message.mid;
 
   var messageText = message.text;
   var messageAttachments = message.attachments;
+  var greeting = firstEntity(message.nlp, 'greetings');
+  var thanks = firstEntity(message.nlp, 'thanks');
 
-  if (messageText) {
+  console.log("this thing:");
+  console.log(greeting);
+  
+  if (greeting && greeting.confidence > 0.8) {
+    sendTextMessage(senderID, "Well hello there! I'd here to help. Send me an ingredient list and I'll take a look.");
+
+  } else if (thanks && thanks.confidence > 0.8) {
+    sendTextMessage(senderID, "You're welcome! I'm happy to help! Let me know next time you have an ingredient list that needs to be analyzed.");
+  
+  } else if (messageText) {
     // If we receive a text message, check to see if it matches a keyword
     // and send back the template example. Otherwise, just echo the text we received.
     evaluateIngredients(messageText, senderID);
@@ -117,7 +136,7 @@ function receivedPostback(event) {
   console.log("postback received");
   var payload = event.postback.payload;
   if (payload === "get_started"){
-      sendTextMessage(senderID, "OK send me some ingredients");
+      sendTextMessage(senderID, "Welcome, as a baby \uD83D\uDC76 bot \uD83E\uDD16 right now all I can really do is read ingredients. Would you like to send me some? I'll take a look.");
   }
   if (payload === "about_curly_girl"){
     var introMessage = "The curly girl method is a way of caring for your naturally curly or wavy hair that helps it look its best."
@@ -469,24 +488,26 @@ function evaluateIngredients(ingredients, senderID){
     // TODO need case for handling extremely long strings to warn them of issue
     // detect cones
     var cone = /cone/i; 
-    if(cone.test(ingredientTest)) {
+    if(cone.test(ingredientTest) || ingredientTest == "dimethiconol") {
 
       ingredientDetected = true;
       console.log("silicone");
       // for now we only have one "good silicone" pattern so let's test for it
       var goodSilicone = /quaternium/i
       if (goodSilicone.test(ingredientTest)){
-        //sendTextMessage(senderID, "this is a quaternium silicone which is a good silicone");
-
         goodSiliconeList += ingredientTest += " \n ";;
       } else if (goodSilicones.indexOf(ingredientTest) !== -1) {
         goodSiliconeList += ingredientTest += " \n ";
       } else if (badSilicones.indexOf(ingredientTest) !== -1) {
-       // sendTextMessage(senderID, "this is a bad silicone called " + badSilicones[badSiliconeIndex]);
         badIngredientsDetected = true;
         badSiliconeList += ingredientTest += " \n" ;
       } else {
-        unknownSiliconeList += ingredientTest += " \n ";
+        var peg = /peg/i;
+        if(peg.test(ingredientTest)) {
+          unknownSiliconeList += ingredientTest += " though this one looks a bit like a peg silicone which should be water soluble \n ";
+        } else {
+          unknownSiliconeList += ingredientTest += " \n ";
+        }
         questionableIngredientsDetected=true;
 
       }
@@ -526,7 +547,22 @@ function evaluateIngredients(ingredients, senderID){
         goodAlcoholList += ingredientTest += " \n";
       } else {
         questionableIngredientsDetected=true;
-        unknownAlcoholList += ingredientTest += " \n";
+        var goodAlcoholDetect = false;
+        
+        goodAlcohols.forEach(function(alcohol) {
+          var testing = ingredientTest.indexOf(alcohol);
+          if(testing !== -1){
+            goodAlcoholDetect = true;
+            goodAlcoholList += "-";
+            goodAlcoholList += ingredientTest += " is probably " ;
+            goodAlcoholList += alcohol += " which is a good alcohol, but check to make sure \n\n";
+          }
+        });
+
+        if (goodAlcoholDetect == false){
+          unknownAlcoholList += ingredientTest += " \n";
+        }
+        
       }
 
     };
@@ -569,7 +605,7 @@ var messages = [];
   
  if(ingredientsHandled=== false){
    console.log("this won't be handled");
-    var message = "Sorry, but I can't really read this list properly because it doesn't look like a comma seperated list to me. Being a \uD83E\uDD16 does have some annoying limitations sometimes. "
+    var message = "Wow thanks for the compliment! \uD83D\uDE0A Oh was this supposed to be some ingredients? If so I'm sorry, but I can't really read this list properly because it doesn't look like a comma seperated list to me. Being a \uD83E\uDD16 does have some annoying limitations sometimes. "
     if (ingredientDetected === true) {
       message += " It does look like this contains some silicones or sulfates though, or maybe both.";
         
@@ -586,7 +622,7 @@ var messages = [];
   }
 
   if (badSiliconeList) {
-    var message = "\uD83D\uDEAB Yikes, it seems to me this product has these bad silicones, they can build up on your hair and mean this product is not 'curly girl approved': \n \n"; 
+    var message = "\uD83D\uDEAB Yikes, it seems to me this product has these bad silicones, they can build up on your hair and mean this product is not curly girl approved \uD83D\uDE22: \n \n"; 
     messages.push(message + badSiliconeList);
 
   }
