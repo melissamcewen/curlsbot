@@ -13,3 +13,7 @@ Right now the main (OK one of the only) features is that you can send CurlyBot a
 
 ### About Curly Girl
 The persistent menu in the chat box has a feature where you can click "About Curly Girl" for some quick info about the method.
+
+## Credits
+
+Inspired by some of the bots I've worked on at work (though this is my first made on my own) as well as is [isitcg](http://isitcg.herokuapp.com/) app
