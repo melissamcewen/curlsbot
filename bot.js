@@ -505,9 +505,13 @@ function evaluateIngredients(ingredients, senderID){
         badSiliconeList += ingredientTest += " \n" ;
       } else {
         var peg = /peg/i;
+        var dimethicone = /dimethicone/i;
         if(peg.test(ingredientTest)) {
           unknownSiliconeList += "- ";
           unknownSiliconeList += ingredientTest += " though this one looks a bit like a peg silicone which should be water soluble \uD83E\uDD14. It's probably OK. \n \n ";
+        } else if (dimethicone.test(ingredientTest)) {
+          badIngredientsDetected = true;
+          badSiliconeList += ingredientTest += " looks like dimethicone to me \n" ;
         } else {
           unknownSiliconeList += ingredientTest += " \n ";
         }
@@ -540,8 +544,10 @@ function evaluateIngredients(ingredients, senderID){
 
     // detect alcohol
     var alcohol = /alcohol/i;
+    var witchHazel = /witch hazel/i;
+    var propanol = /propanol/i;
     var alcoholTest = badAlcohols.indexOf(ingredientTest);
-    if(alcohol.test(ingredientTest)|| alcoholTest !== -1){
+    if(alcohol.test(ingredientTest)|| alcoholTest !== -1 || witchHazel.test(ingredientTest) || propanol.test(ingredientTest)){
       ingredientDetected = true;
       if(alcoholTest !== -1){
         badIngredientsDetected = true;
@@ -573,7 +579,7 @@ function evaluateIngredients(ingredients, senderID){
           }
         });
 
-        if (goodAlcoholDetect == false && badAlcoholDetect == false){
+        if (goodAlcoholDetect === false && badAlcoholDetect === false){
           unknownAlcoholList += ingredientTest += " \n";
         }
         
