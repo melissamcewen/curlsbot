@@ -8,7 +8,7 @@ const request = require('request');
 const path = require('path');
 const async = require("async");
 
-var messengerButton = "<html><head><title>Facebook Messenger Bot</title></head><body><h1>Facebook Messenger Bot</h1>This is a bot based on Messenger Platform QuickStart. For more details, see their <a href=\"https://developers.facebook.com/docs/messenger-platform/guides/quick-start\">docs</a>.<script src=\"https://button.glitch.me/button.js\" data-style=\"glitch\"></script><div class=\"glitchButton\" style=\"position:fixed;top:20px;right:20px;\"></div></body></html>";
+var messengerButton = "<html><head><title>CurlsBot</title></head><body><h1>Facebook Messenger Bot</h1> I'm a wee bot to give hair care advice for curly hair. For more details, see their <a href=\"https://developers.facebook.com/docs/messenger-platform/guides/quick-start\">docs</a>.<script src=\"https://button.glitch.me/button.js\" data-style=\"glitch\"></script><div class=\"glitchButton\" style=\"position:fixed;top:20px;right:20px;\"></div></body></html>";
 
 // The rest of the code implements the routes for our Express server.
 let app = express();
@@ -414,7 +414,8 @@ var badAlcohols = [
 "sd alcohol",
 "propanol",
 "propyl alcohol",
-"isopropyl alcohol"
+"isopropyl alcohol",
+"alcohol denat."
 ];
 
 var goodAlcohols = [
@@ -428,7 +429,8 @@ var goodAlcohols = [
 "myristyl alcohol",
 "stearyl alcohol",
 "c30-50 alcohols",
-"lanolin alcohol"
+"lanolin alcohol",
+"benzyl alcohol"
 ];
 
 var badWaxesOils = [
@@ -504,7 +506,8 @@ function evaluateIngredients(ingredients, senderID){
       } else {
         var peg = /peg/i;
         if(peg.test(ingredientTest)) {
-          unknownSiliconeList += ingredientTest += " though this one looks a bit like a peg silicone which should be water soluble \n ";
+          unknownSiliconeList += "- ";
+          unknownSiliconeList += ingredientTest += " though this one looks a bit like a peg silicone which should be water soluble \uD83E\uDD14. It's probably OK. \n \n ";
         } else {
           unknownSiliconeList += ingredientTest += " \n ";
         }
@@ -548,6 +551,7 @@ function evaluateIngredients(ingredients, senderID){
       } else {
         questionableIngredientsDetected=true;
         var goodAlcoholDetect = false;
+        var badAlcoholDetect = false;
         
         goodAlcohols.forEach(function(alcohol) {
           var testing = ingredientTest.indexOf(alcohol);
@@ -555,11 +559,21 @@ function evaluateIngredients(ingredients, senderID){
             goodAlcoholDetect = true;
             goodAlcoholList += "-";
             goodAlcoholList += ingredientTest += " is probably " ;
-            goodAlcoholList += alcohol += " which is a good alcohol, but check to make sure \n\n";
+            goodAlcoholList += alcohol += " which is an OK alcohol, but check to make sure \n\n";
+          }
+        });
+        
+        badAlcohols.forEach(function(alcohol) {
+          var testing = ingredientTest.indexOf(alcohol);
+          if(testing !== -1 && badAlcoholDetect === false){
+            badAlcoholDetect = true;
+            badAlcoholList += "-";
+            badAlcoholList += ingredientTest += " is probably " ;
+            badAlcoholList += alcohol += " which is a harsh drying alcohol that is not curly girl approved, but check to make sure \n\n";
           }
         });
 
-        if (goodAlcoholDetect == false){
+        if (goodAlcoholDetect == false && badAlcoholDetect == false){
           unknownAlcoholList += ingredientTest += " \n";
         }
         
@@ -674,13 +688,13 @@ var messages = [];
   }
   
   if(badIngredientsDetected === true){
-    var message = "\uD83D\uDC81 My final verdict? Looks like this product is NOT curly girl approved \uD83D\uDED1"
+    var message = "\uD83E\uDD16\uD83D\uDC4E My final verdict? Looks like this product is NOT curly girl approved \uD83D\uDED1"
     messages.push(message);
   } else if (questionableIngredientsDetected === true ) {
-    var message = "\uD83D\uDC81 My final verdict? I can't say if this is approved or not, you'll need to do your own research. \u26A0\uFE0F"
+    var message = "\uD83E\uDD16\u2753 My final verdict? I can't say if this is approved or not, you'll need to do your own research. \u26A0\uFE0F"
     messages.push(message);
   } else {
-    var message = "\uD83C\uDF89 Woohoo, I can't find anything wrong with this, looks like it's curly girl approved! But don't forget to read the label carefully and do a backup check yourself – ingredients listed online are not always accurate. "
+    var message = "\uD83E\uDD16\uD83D\uDC4D Woohoo, I can't find anything wrong with this, looks like it's curly girl approved! But don't forget to read the label carefully and do a backup check yourself – ingredients listed online are not always accurate. "
     messages.push(message);
   }
 console.log(messages);
