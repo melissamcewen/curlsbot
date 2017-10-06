@@ -1,6 +1,6 @@
 {
   "greeting": [{
     "locale": "default",
-    "text": "Hello, I'm CurlsBot, I'm just a baby bot and I'm learning, but message me a list of ingredients and I'll do my best to tell you if it's Curly Girl friendly!"
+    "text": "Thanks for helping test me! You can message me lists of ingredients and I can take a look at them to see if they are curly girl approved. Sadly I can't tell you anything based on just names of products or pictures yet, but my creator hopes to add this functionality."
   }]
 }
