@@ -5,7 +5,7 @@ This is a Facebook bot dedicated to the curly girl method of hair care pioneered
 
 A lot of people are interested in properly caring for their naturally curly or wavy hair, but it can be confusing to find the right methods and products. This bot aims to make it all easier!
 
-Not launched yet but message the [project's FB page](https://www.facebook.com/CurlsBot/) if you'd like to test or simply "like" it to follow its progress.
+Not launched yet but message the [project's FB page](https://www.facebook.com/CurlsBot/) if you'd like to test or simply "like" it to follow its progress. Also visit [our website for more info](http://curlsbot.com/).
 
 ## Features
 

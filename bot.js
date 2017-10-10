@@ -430,7 +430,9 @@ var goodAlcohols = [
 "stearyl alcohol",
 "c30-50 alcohols",
 "lanolin alcohol",
-"benzyl alcohol"
+"benzyl alcohol",
+"stearyl alcohol",
+"aminomethyl propanol"
 ];
 
 var badWaxesOils = [
@@ -443,7 +445,8 @@ var badWaxesOils = [
 "beeswax",
 "candelia wax",
 "cire dabeille",
-"cera alba"
+"cera alba",
+"paraffinum liquidum (mineral oil)"
 ];
 
 function evaluateIngredients(ingredients, senderID){
@@ -482,7 +485,7 @@ function evaluateIngredients(ingredients, senderID){
     //clean up our string
     var ingredientTest = ingredient.trim().toLowerCase();
     console.log(ingredientTest.indexOf(',') == -1);
-    if (ingredientTest.length >= 100 ){
+    if (ingredientTest.length >= 150 ){
       ingredientsHandled = false;
       console.log("can't handle");
       return;
@@ -490,7 +493,8 @@ function evaluateIngredients(ingredients, senderID){
     // TODO need case for handling extremely long strings to warn them of issue
     // detect cones
     var cone = /cone/i; 
-    if(cone.test(ingredientTest) || ingredientTest == "dimethiconol") {
+    var dimethiconol = /dimethicon/i; 
+    if(cone.test(ingredientTest) || dimethiconol.test(ingredientTest)) {
 
       ingredientDetected = true;
       console.log("silicone");
@@ -502,14 +506,14 @@ function evaluateIngredients(ingredients, senderID){
         goodSiliconeList += ingredientTest += " \n ";
       } else if (badSilicones.indexOf(ingredientTest) !== -1) {
         badIngredientsDetected = true;
-        badSiliconeList += ingredientTest += " \n" ;
+        badSiliconeList += ingredientTest += " \n" ; 
       } else {
         var peg = /peg/i;
         var dimethicone = /dimethicone/i;
         if(peg.test(ingredientTest)) {
           unknownSiliconeList += "- ";
           unknownSiliconeList += ingredientTest += " though this one looks a bit like a peg silicone which should be water soluble \uD83E\uDD14. It's probably OK. \n \n ";
-        } else if (dimethicone.test(ingredientTest)) {
+        } else if (dimethicone.test(ingredientTest) || dimethiconol.test(ingredientTest)) {
           badIngredientsDetected = true;
           badSiliconeList += ingredientTest += " looks like dimethicone to me \n" ;
         } else {
@@ -525,7 +529,8 @@ function evaluateIngredients(ingredients, senderID){
     // detect sulfates
     var sulfate = /sulfate/i;
     var sulfo = /sulfo/i;
-    if(sulfate.test(ingredientTest)|| sulfo.test(ingredientTest)) {
+    var sarcosinate = /sarcosinate/i;
+    if(sulfate.test(ingredientTest)|| sulfo.test(ingredientTest) || sarcosinate.test(ingredientTest)) {
       console.log("sulfate detected");
       ingredientDetected = true;
       // seems like there is only one good sulfate so let's test for it
@@ -573,6 +578,7 @@ function evaluateIngredients(ingredients, senderID){
           var testing = ingredientTest.indexOf(alcohol);
           if(testing !== -1 && badAlcoholDetect === false){
             badAlcoholDetect = true;
+            badIngredientsDetected === true;
             badAlcoholList += "-";
             badAlcoholList += ingredientTest += " is probably " ;
             badAlcoholList += alcohol += " which is a harsh drying alcohol that is not curly girl approved, but check to make sure \n\n";
@@ -604,8 +610,9 @@ function evaluateIngredients(ingredients, senderID){
           var testing = ingredientTest.indexOf(baddy);
           if(testing !== -1 && WaxOildetect === false){
             WaxOildetect = true;
+            questionableIngredientsDetected = true;
             badWaxOilList += ingredientTest += " is probably " ;
-            badWaxOilList += baddy += " but I'm not entirely sure \n";
+            badWaxOilList += baddy += " which is not CG approved but I'm not entirely sure \n";
           }
         });
 
@@ -703,13 +710,12 @@ var messages = [];
     var message = "\uD83E\uDD16\uD83D\uDC4D Woohoo, I can't find anything wrong with this, looks like it's curly girl approved! But don't forget to read the label carefully and do a backup check yourself – ingredients listed online are not always accurate. "
     messages.push(message);
   }
-console.log(messages);
-async function executeSequentially(messages) {
-
+  console.log(messages);
+  async function executeSequentially(messages) {
     for (const message of messages) {
         await sendTextMessage(senderID, message);
     }
-}
+  }
   executeSequentially(messages);
   
 
