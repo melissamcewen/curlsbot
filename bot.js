@@ -485,7 +485,7 @@ function evaluateIngredients(ingredients, senderID){
     //clean up our string
     var ingredientTest = ingredient.trim().toLowerCase();
     console.log(ingredientTest.indexOf(',') == -1);
-    if (ingredientTest.length >= 100 ){
+    if (ingredientTest.length >= 150 ){
       ingredientsHandled = false;
       console.log("can't handle");
       return;
@@ -529,7 +529,8 @@ function evaluateIngredients(ingredients, senderID){
     // detect sulfates
     var sulfate = /sulfate/i;
     var sulfo = /sulfo/i;
-    if(sulfate.test(ingredientTest)|| sulfo.test(ingredientTest)) {
+    var sarcosinate = /sarcosinate/i;
+    if(sulfate.test(ingredientTest)|| sulfo.test(ingredientTest) || sarcosinate.test(ingredientTest)) {
       console.log("sulfate detected");
       ingredientDetected = true;
       // seems like there is only one good sulfate so let's test for it

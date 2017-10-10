@@ -1,6 +1,6 @@
 {
   "greeting": [{
     "locale": "default",
-    "text": "Thanks for helping test me! You can message me lists of ingredients and I can take a look at them to see if they are curly girl approved. Sadly I can't tell you anything based on just names of products or pictures yet, but my creator hopes to add this functionality."
+    "text": "Thanks for helping test me! You can message me lists of ingredients and I can take a look at them to see if they are curly girl approved."
   }]
 }
