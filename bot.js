@@ -394,7 +394,7 @@ var badSulfates = [
 "sodium lauryl sulfate",
 "sodium lauryl sulfoacetate",
 "sodium myreth sulfate",
-"sodium Xylenesulfonate",
+"sodium xylenesulfonate",
 "tea-dodecylbenzenesulfonate",
 "ethyl peg-15 cocamine sulfate",
 "dioctyl sodium sulfosuccinate"
@@ -403,6 +403,7 @@ var badSulfates = [
 var goodSulfates = [
 "behentrimonium methosulfate",
 "disodium laureth sulfosuccinate",
+"magnesium sulfate"
 ];
 
 var badAlcohols = [
@@ -666,7 +667,7 @@ var messages = [];
   }
 
   if (badSulfateList){
-    var message = "\uD83D\uDEAB Yikes! These harsh sulfates are not curly girl approved! : \n \n"
+    var message = "\uD83D\uDEAB Yikes! These are either harsh sulfates or similar sulfer-based compounds which are not curly girl approved : \n \n"
     messages.push(message + badSulfateList);
   }
 
