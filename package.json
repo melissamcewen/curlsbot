@@ -4,7 +4,7 @@
   "description": "Messenger Platform QuickStart Demo",
   "main": "index.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,7 @@
     "body-parser": "*",
     "async": "*"
   },
-  "engines": { "node": "7.x" }
+  "engines": {
+    "node": "7.x"
+  }
 }
