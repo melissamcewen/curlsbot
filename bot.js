@@ -6,7 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const path = require('path');
-const async = require("async");
+const async = require('async');
 
 var messengerButton = "<html><head><title>CurlsBot</title></head><body><h1>Facebook Messenger Bot</h1> I'm a wee bot to give hair care advice for curly hair. For more details, see their <a href=\"https://developers.facebook.com/docs/messenger-platform/guides/quick-start\">docs</a>.<script src=\"https://button.glitch.me/button.js\" data-style=\"glitch\"></script><div class=\"glitchButton\" style=\"position:fixed;top:20px;right:20px;\"></div></body></html>";
 
@@ -388,13 +388,12 @@ var badSulfates = [
 "ammonium laureth sulfate",
 "ammonium lauryl sulfate",
 "ammonium xylenesulfonate",
-"sodium c14-16 olefin sulfonate",
 "sodium cocoyl sarcosinate",
 "sodium laureth sulfate",
 "sodium lauryl sulfate",
 "sodium lauryl sulfoacetate",
 "sodium myreth sulfate",
-"sodium Xylenesulfonate",
+"sodium xylenesulfonate",
 "tea-dodecylbenzenesulfonate",
 "ethyl peg-15 cocamine sulfate",
 "dioctyl sodium sulfosuccinate"
@@ -403,6 +402,8 @@ var badSulfates = [
 var goodSulfates = [
 "behentrimonium methosulfate",
 "disodium laureth sulfosuccinate",
+"magnesium sulfate",
+"sodium lauroyl sarcosinate"
 ];
 
 var badAlcohols = [
@@ -446,7 +447,8 @@ var badWaxesOils = [
 "candelia wax",
 "cire dabeille",
 "cera alba",
-"paraffinum liquidum (mineral oil)"
+"paraffinum liquidum (mineral oil)",
+"microcrystalline wax" 
 ];
 
 function evaluateIngredients(ingredients, senderID){
@@ -499,10 +501,7 @@ function evaluateIngredients(ingredients, senderID){
       ingredientDetected = true;
       console.log("silicone");
       // for now we only have one "good silicone" pattern so let's test for it
-      var goodSilicone = /quaternium/i
-      if (goodSilicone.test(ingredientTest)){
-        goodSiliconeList += ingredientTest += " \n ";;
-      } else if (goodSilicones.indexOf(ingredientTest) !== -1) {
+      if (goodSilicones.indexOf(ingredientTest) !== -1) {
         goodSiliconeList += ingredientTest += " \n ";
       } else if (badSilicones.indexOf(ingredientTest) !== -1) {
         badIngredientsDetected = true;
@@ -512,7 +511,7 @@ function evaluateIngredients(ingredients, senderID){
         var dimethicone = /dimethicone/i;
         if(peg.test(ingredientTest)) {
           unknownSiliconeList += "- ";
-          unknownSiliconeList += ingredientTest += " though this one looks a bit like a peg silicone which should be water soluble \uD83E\uDD14. It's probably OK. \n \n ";
+          unknownSiliconeList += ingredientTest += " though this one looks a bit like a peg silicone which should be water soluble \uD83E\uDD14. It's probably OK but please look it up to make sure it is approved. \n \n ";
         } else if (dimethicone.test(ingredientTest) || dimethiconol.test(ingredientTest)) {
           badIngredientsDetected = true;
           badSiliconeList += ingredientTest += " looks like dimethicone to me \n" ;
@@ -661,12 +660,12 @@ var messages = [];
   }
 
   if (goodSulfateList){
-    var message = "\u2B50\uFE0F These are sulfates but they are gentle, so that means they are curly-girl approved! : \n \n"
+    var message = "\u2B50\uFE0F These are sulfates or sulfate-like cleansers, but they are gentle, so that means they are curly-girl approved! : \n \n"
     messages.push(message + goodSulfateList);
   }
 
   if (badSulfateList){
-    var message = "\uD83D\uDEAB Yikes! These harsh sulfates are not curly girl approved! : \n \n"
+    var message = "\uD83D\uDEAB Yikes! These are either harsh sulfates or similar sulfer-based compounds which are not curly girl approved : \n \n"
     messages.push(message + badSulfateList);
   }
 
